@@ -1,0 +1,6 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<SelectDialog id="idProjDetailsFrag" title="Project Details" search="handleCharSearch" liveChange="handleCharSearch" rememberSelections="true"
+		confirm="handleProjSelection" cancel="handleClose" items="{/projDetails}" multiSelect="false">
+		<StandardListItem title="{PROJECT_ID}" description="{PROJECT_DET}"  type="Active"/>
+	</SelectDialog>
+</core:FragmentDefinition>

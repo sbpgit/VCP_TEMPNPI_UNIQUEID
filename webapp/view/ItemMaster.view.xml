@@ -1,0 +1,132 @@
+<mvc:View controllerName="vcpapp.vcptempidcreation.controller.ItemMaster"
+    xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
+	displayBlock="true" xmlns="sap.m" xmlns:m="sap.m" xmlns:l="sap.ui.layout" xmlns:ux="sap.uxap" xmlns:f="sap.ui.layout.form"
+	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:u="sap.ui.unified">
+    <Page id="idPage" showFooter="true">
+	<ux:ObjectPageLayout id="ObjectPageLayout" showFooter="true" headerContentPinnable="true">
+		<ux:headerTitle>
+			<ux:ObjectPageDynamicHeaderTitle>
+				<ux:expandedHeading>
+					<HBox>
+						<Title text="{i18n>title}" class="TitleClass" titleAlignment="Center" wrapping="true"/>						
+					</HBox>
+				</ux:expandedHeading>
+				<ux:snappedHeading>
+					<HBox fitContainer="true" alignItems="Center">
+						<Title text="{i18n>title}" wrapping="true" class="TitleClass"/>
+					</HBox>
+				</ux:snappedHeading>
+                 <ux:navigationActions>
+                            <Button class="classHdr" icon="sap-icon://sys-help" id="idNav3" press="onNavPress" type="Emphasized" tooltip="Help Document" />
+                        </ux:navigationActions>
+                </ux:ObjectPageDynamicHeaderTitle>
+		</ux:headerTitle>
+		  <ux:headerContent>
+            <FlexBox wrap="Wrap" justifyContent= "Inherit" fitContainer="true">
+            <VBox >
+                <Label text="Configurable Product" class="flux"/>
+                <Input id="idConfigProd" class="flux" width="450px" placeholder="Configurable Product" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="handleValueHelp" />
+            </VBox>
+            <VBox >
+                <Label text="Project Id" class="flux"/>
+                <Input id="idProjDet" class="flux" width="250px" placeholder="Project Id" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="handleValueHelp" />
+            </VBox>
+            <VBox>
+            <Label text=""></Label>
+            <HBox class="flux1">
+             <VBox >                 
+                <Button text="Go" class="hom1" type="Emphasized" press="onGetData" tooltip="Get data based on filters" />
+              </VBox>
+             <VBox >                 
+                <Button text="Reset" class="hom1" type="Transparent" press="onResetData" tooltip="Reset" />
+             </VBox>   
+             </HBox>
+             </VBox> 
+        </FlexBox>
+        </ux:headerContent>
+		<ux:sections>
+			<ux:ObjectPageSection id="idObjPageSec">
+				<ux:subSections>
+					<ux:ObjectPageSubSection id="idObjPageSubSec">
+						<ux:blocks>
+                         <Table id="idTempDetails" growing="true"  growingDirection="Downwards" growingThreshold="500" 
+                              updateFinished="onTableUpdate" items="{path: '/tempDetails'}"  itemPress="onHandleSelect"  
+                              mode="SingleSelectMaster"   selectionChange="onHandleSelect" rememberSelections="false"> 
+                              <headerToolbar>
+			                    <OverflowToolbar>
+                                <SearchField id="newTabSearch" search="oHomesearch" liveChange="oHomesearch" width="400px" placeholder="Ref Unique Id" />
+				                    <ToolbarSpacer/>
+			                    </OverflowToolbar>
+		                      </headerToolbar>                             
+                                <columns>
+                                <!-- <Column hAlign="Center" width="auto" vAlign="Middle">
+                                        <Text text="Project Id" />
+                                    </Column>
+                                    <Column hAlign="Center" width="auto" vAlign="Middle">
+                                        <Text text="Product ID" />
+                                    </Column> -->
+                                    <Column hAlign="Center" width="auto" vAlign="Middle" visible="true">
+                                        <Text text="Temp Unique Id" />
+                                    </Column> 
+                                    <Column hAlign="Center" width="auto" vAlign="Middle" >
+                                        <Text text="Reference Unique Id" />
+                                    </Column> 
+                                    <Column hAlign="Center" width="auto" vAlign="Middle" visible="false">
+                                        <Text text="Char Num" />
+                                    </Column>
+                                    <Column hAlign="Center" width="auto" vAlign="Middle" visible="false">
+                                        <Text text="Char Value Number" />
+                                    </Column>
+                                    <Column hAlign="Center" width="auto" vAlign="Middle" visible="false">
+                                        <Text text="Char Value" />
+                                    </Column>
+                                    <Column hAlign="Center" width="auto" vAlign="Middle" visible="false">
+                                        <Text text="Reference Char Value" />
+                                    </Column>
+                                    <Column hAlign="Center" width="auto" vAlign="Middle">
+                                        <Text text="Weightage" />
+                                    </Column>
+                                      <Column hAlign="Center" width="auto" vAlign="Middle">
+                                        <Text text="Valid From" />
+                                    </Column> 
+                                     <Column hAlign="Center" width="auto" vAlign="Middle">
+                                        <Text text="Valid To" />
+                                    </Column>                            
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+
+                                            <!-- <Text text="{PROJECT_ID}" /> 
+                                            <Text text="{PRODUCT_ID}" />     -->
+                                            <Text text="{TMP_UNIQUE_ID}" />
+                                            <ObjectIdentifier title="{REF_UNIQUE_ID}" text="{UNIQUE_DESC}"/>
+                                            <Text text= "{CHAR_NUM}" />
+                                            <Text text= "{CHARVAL_NUM}" />
+                                             <Text text= "{CHAR_VALUE}" />
+                                            <Text text= "{REF_CHAR_VALUE}" />
+                                            <Input value= "{WEIGHT}" liveChange="onInputChange" />
+                                            <!-- <Text text= "{WEIGHT}" /> -->
+                                            <DatePicker value= "{VALID_FROM}" displayFormat="YYYY-MM-dd" valueFormat="YYYY-MM-dd" class="disabledInput" />
+                                            <DatePicker value= "{VALID_TO}" displayFormat="YYYY-MM-dd" valueFormat="YYYY-MM-dd" class="disabledInput"/>
+                                            <!-- <Text text= "{VALID_FROM}" />
+                                            <Text text= "{VALID_TO}" /> -->
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                              </Table>	
+                        </ux:blocks>
+					</ux:ObjectPageSubSection>
+				</ux:subSections>
+			</ux:ObjectPageSection>
+		</ux:sections>
+	</ux:ObjectPageLayout>
+  <footer>
+    <OverflowToolbar>
+                <ToolbarSpacer/>
+                <Button id="idSave" text="Save" enabled="false" press="onSavePress"/>
+                <!-- <Button text="Cancel"/> -->
+            </OverflowToolbar>
+            </footer>
+    </Page>
+</mvc:View>

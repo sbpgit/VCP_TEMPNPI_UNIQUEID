@@ -1,0 +1,59 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:core="sap.ui.core" controllerName="vcpapp.vcptempidcreation.controller.ItemDetail"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+    <!-- <Page id="page" showHeader="false" showFooter="true"> -->
+        <!-- <content> -->
+        <HBox>
+        <OverflowToolbar>
+           
+                    <SearchField id="idCharSearch" liveChange="onCharSearch" placeholder="Characteristic / Characteristic Value" width="800px"/>
+                    <ToolbarSpacer/>
+                    <!-- <Button id="idadd" text="Create Order" press="onOrderCreate" visible="true"/> -->
+                    
+                    </OverflowToolbar>
+                    </HBox>
+                    <Table id="idMatvarItem" items="{path: '/results1'}" rememberSelections="false"  sticky="ColumnHeaders" >
+                        <columns>
+                         <Column hAlign="Left" visible="true" >
+                                <Text text="TempUID" />
+                            </Column>
+                        <Column hAlign="Left" >
+                                <Text text="Char Num" />
+                            </Column>
+                            <Column hAlign="Left" visible="false">
+                                <Text text="{i18n>charno}" />
+                            </Column>
+                            <Column hAlign="Left" >
+                                <Text text="Char Value" />
+                            </Column>
+                            <Column hAlign="Left" visible="false">
+                                <Text text="{i18n>charvalno}"/>
+                            </Column>
+                            <!-- <Column hAlign="Left" visible="false">
+                                <Text text=""/>
+                            </Column> -->
+                        </columns>
+                        <items>
+                            <ColumnListItem>
+                                <cells>
+                                <Text text="{TMP_UNIQUE_ID}"/>
+                                    <ObjectIdentifier title="{CHAR_NUM}" text="{CHAR_DESC}"/>
+                                    <Text text="{CHAR_NUM}" />
+                                    <ObjectIdentifier title="{CHAR_VALUE}" text="{CHARVAL_DESC}" />
+                                    <Text text="{CHARVAL_NUM}" />
+                                    <!-- <Button text="{path:'OFLAG', formatter: '.formatter.getStatus'}" icon="sap-icon://decline" press="onTabDel"/> -->
+                                    </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                <!-- </content> -->
+                <!-- <footer>
+					<OverflowToolbar>
+						<ToolbarSpacer/>
+						<Button id="idUpdateSave" text="Save" press="onUpdateItem" type="Emphasized" textDirection="LTR" visible="false"/>
+					</OverflowToolbar>
+				</footer> -->
+    <!-- </Page> -->
+</mvc:View>

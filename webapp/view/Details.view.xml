@@ -1,0 +1,17 @@
+<mvc:View controllerName="vcpapp.vcptempidcreation.controller.Details" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f">
+    <Page id="pageId">
+        <customHeader>
+            <Bar>
+                <contentMiddle>
+                    <Title text="{i18n>title}" class="boldText" />
+                </contentMiddle>
+                <contentRight>
+                    <Button class="hdrBtnMarginHdr" icon="sap-icon://sys-help" id="idNav" press="onNavPress" type="Emphasized" tooltip="Help Document" />
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+            <f:FlexibleColumnLayout id="fcl" />
+        </content>
+    </Page>
+</mvc:View>

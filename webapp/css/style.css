@@ -1,0 +1,57 @@
+/* Enter your custom styles here */
+.flux{
+    margin-left:50px !important;
+    }
+    
+    .flux1{
+        margin-left: 150px !important;
+    }
+    
+    .sapUxAPObjectPageContainerNoBar>.sapUxAPObjectPageSection:first-child:not(.sapUxAPObjectPageSectionNoTitle) {
+        margin-top: 0rem !important;
+    }
+    
+    .sapUiSizeCompact .sapUxAPObjectPageSectionHeader, .sapUxAPObjectPageSectionHeader {
+        height: 0rem !important;
+        line-height: 0rem !important;
+    }
+    
+    .sapUxAPObjectPageSubSection {
+        padding-top: 0rem !important;
+    }
+    
+    .sapUxAPObjectPageSection .sapUxAPObjectPageSectionContainer .sapUxAPObjectPageSubSection .sapUxAPBlockContainer {
+        padding-bottom: 0.5rem;
+        padding-top: 0.5rem;
+        padding-left: 0;
+        padding-right: 0;
+        background: #fff;
+        margin-left: 0rem !important;
+        margin-right: 0rem !important;
+        border-radius: .75rem;
+    }
+    
+    .disabledInput input.sapMInputBaseInner {
+        pointer-events: none;
+    }
+    
+    .newClass{
+        padding-left:10px !important;
+    }
+    
+    .sapFDynamicPage-Std-Tablet .sapUiResponsiveContentPadding .sapMITBContent, .sapFDynamicPage-Std-Desktop .sapUiResponsiveContentPadding .sapMITBContent {
+        padding: 0rem !important;
+    }
+    .IconClass{
+        margin-left:450px !important;
+    }
+    
+    /* .sapMSplitContainerHideMode>.sapMSplitContainerDetail .sapMITB.sapUiResponsiveContentPadding > .sapMITBContainerContent > .sapMITBContent, .sapMITB.sapUiResponsiveContentPadding > .sapMITBContainerContent > .sapMITBContent {
+        padding: 0rem !important;
+        box-sizing: border-box;
+    }
+    
+    .sapMTB-Transparent-CTX.sapMTB.sapMListHdrTBar, .sapMIBar.sapMTB-Info-CTX.sapMTB {
+        padding: 0rem !important;
+    } */
+    
