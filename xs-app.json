@@ -5,7 +5,7 @@
     {
       "source": "^/v2/(.*)$",
       "target": "/v2/$1",
-      "destination": "ConfigProd",
+      "destination": "ConfigProdAuth",
       "authenticationType": "xsuaa",
       "csrfProtection": false
     },
