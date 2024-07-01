@@ -456,6 +456,19 @@ function (Controller, MessageToast, MessageBox, JSONModel, Filter, FilterOperato
         },
 
 
+        onInputChange: function(oEvent){
+
+            var path = oEvent.getSource().getBindingContext().getPath();
+            var Data = that.byId("idTempDetails").getModel().getProperty(path);
+
+
+            var index = that.ConfigArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.UNIQUE_ID === Data.UNIQUE_ID);
+
+            that.ConfigArray[index].WEIGHT = parseInt(oEvent.getParameters("value").value);
+
+        },
+
+
 
 
 
