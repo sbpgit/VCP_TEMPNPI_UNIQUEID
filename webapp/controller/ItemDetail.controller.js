@@ -43,13 +43,13 @@ sap.ui.define(
                 var srefUniqId = that.oGModel.getProperty("/RefuniqId");
                 var sUniqId = that.oGModel.getProperty("/uniqId");
                 that.totalUniqeData = that.oGModel.getProperty("/uniqueData");
-                that.tableData = that.totalUniqeData.filter(f => f.REF_UNIQUE_ID === srefUniqId && f.UNIQUE_ID === sUniqId);
+                that.tableData = that.totalUniqeData.filter(f => f.REF_UNIQUE_ID === srefUniqId && f.TMP_UNIQUE_ID === sUniqId);
                 that.oCharModel.setData({results1:that.tableData[0].CONFIG});
                 that.byId("idMatvarItem").setModel(that.oCharModel);
 
                 // var tmpuid = "Temp UID" + " - " + that.tableData[0].UNIQUE_ID;
                 // var refuid = "Ref UID" + " - " + that.tableData[0].REF_UNIQUE_ID;
-                that.byId("TmpUID").setText(that.tableData[0].UNIQUE_ID);
+                that.byId("TmpUID").setText(that.tableData[0].TMP_UNIQUE_ID);
                 that.byId("RefUID").setText(that.tableData[0].REF_UNIQUE_ID);
                 sap.ui.core.BusyIndicator.hide();
             },

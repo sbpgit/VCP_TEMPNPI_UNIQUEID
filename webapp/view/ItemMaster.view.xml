@@ -96,22 +96,15 @@
                                 <items>
                                     <ColumnListItem>
                                         <cells>
-
-                                            <!-- <Text text="{PROJECT_ID}" /> 
-                                            <Text text="{PRODUCT_ID}" />     -->
-                                            <!-- <Text text="{TMP_UNIQUE_ID}" /> -->
-                                            <Text text="{UNIQUE_ID}" />
-                                            <ObjectIdentifier title="{REF_UNIQUE_ID}" text="{UNIQUE_DESC}"/>
+                                            <Text text="{TMP_UNIQUE_ID}" />
+                                            <ObjectIdentifier title="{REF_UNIQUE_ID}" text="{TMP_UNIQUE_DESC}"/>
                                             <Text text= "{CHAR_NUM}" />
                                             <Text text= "{CHARVAL_NUM}" />
                                              <Text text= "{CHAR_VALUE}" />
                                             <Text text= "{REF_CHAR_VALUE}" />
                                             <Input value= "{WEIGHT}" liveChange="onInputChange" />
-                                            <!-- <Text text= "{WEIGHT}" /> -->
-                                            <DatePicker value= "{VALID_FROM}" displayFormat="YYYY-MM-dd" valueFormat="YYYY-MM-dd" class="disabledInput" />
-                                            <DatePicker value= "{VALID_TO}" displayFormat="YYYY-MM-dd" valueFormat="YYYY-MM-dd" class="disabledInput"/>
-                                            <!-- <Text text= "{VALID_FROM}" />
-                                            <Text text= "{VALID_TO}" /> -->
+                                            <DatePicker value= "{VALID_FROM}" displayFormat="YYYY-MM-dd" valueFormat="YYYY-MM-dd" class="disabledInput" change="onFromDateChange" />
+                                            <DatePicker value= "{VALID_TO}" displayFormat="YYYY-MM-dd" valueFormat="YYYY-MM-dd" class="disabledInput" change="onToDateChange"/>
                                         </cells>
                                     </ColumnListItem>
                                 </items>
@@ -125,7 +118,7 @@
   <footer>
     <OverflowToolbar>
                 <ToolbarSpacer/>
-                <Button id="idSave" text="Save" enabled="false" press="onSavePress"/>
+                <Button id="idSave" text="Generate" enabled="false" press="onGeneratePress"/>
                 <!-- <Button text="Cancel"/> -->
             </OverflowToolbar>
             </footer>
