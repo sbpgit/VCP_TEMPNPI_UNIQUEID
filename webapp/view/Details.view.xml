@@ -1,5 +1,5 @@
 <mvc:View controllerName="vcpapp.vcptempidcreation.controller.Details" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f">
-    <Page id="pageId">
+    <Page id="pageId" showHeader="false">
         <customHeader>
             <Bar>
                 <contentMiddle>

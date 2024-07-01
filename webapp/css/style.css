@@ -10,6 +10,14 @@
     .sapUxAPObjectPageContainerNoBar>.sapUxAPObjectPageSection:first-child:not(.sapUxAPObjectPageSectionNoTitle) {
         margin-top: 0rem !important;
     }
+
+    .boldClass{
+        font-weight : bold !important;
+    }
+
+    .rightCornerText {
+        margin-left: auto !important;
+    }
     
     .sapUiSizeCompact .sapUxAPObjectPageSectionHeader, .sapUxAPObjectPageSectionHeader {
         height: 0rem !important;

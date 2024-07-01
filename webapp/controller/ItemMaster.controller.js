@@ -101,15 +101,18 @@ function (Controller, MessageToast, MessageBox, JSONModel, Filter, FilterOperato
                     },
                     success: function (oData) {
                         that.headerData=[],that.itemData=[];
-                        that.headerData= JSON.parse(oData.tmpuniqueid);
-                        that.oGModel.setProperty("/uniqueData",that.headerData);
-                        that.itemData = that.headerData[1];
-                        that.tabModel.setData({ tempDetails:that.headerData[0] });
+                        // that.headerData= JSON.parse(oData.tmpuniqueid);
+                        // that.oGModel.setProperty("/uniqueData",that.headerData);
+                        // that.itemData = that.headerData[1];
+                        that.generateData(oData.results);
+                        var finalData = that.ConfigArray;
+                        that.oGModel.setProperty("/uniqueData",that.ConfigArray);
+                        that.tabModel.setData({ tempDetails:finalData });
                         that.byId("idTempDetails").setModel(that.tabModel);
                         sap.ui.core.BusyIndicator.hide();
                         that.onHandleSelect();
                     },
-                    error: function () {
+                    error: function (oData) {
                         sap.ui.core.BusyIndicator.hide();
                         MessageToast.show("Failed to get details");
                     },
@@ -156,7 +159,8 @@ function (Controller, MessageToast, MessageBox, JSONModel, Filter, FilterOperato
                     new Filter({
                         filters: [
                             new Filter("UNIQUE_DESC", FilterOperator.Contains, sQuery),
-                            new Filter("REF_UNIQUE_ID", FilterOperator.EQ, sQuery)
+                            new Filter("REF_UNIQUE_ID", FilterOperator.EQ, sQuery),
+                            new Filter("UNIQUE_ID", FilterOperator.EQ, sQuery),
                         ],
                         and: false,
                     })
@@ -181,11 +185,13 @@ function (Controller, MessageToast, MessageBox, JSONModel, Filter, FilterOperato
             // oGModel = that.getModel("oGModel");
             if (oEvent) {
                 var sSelItem = oEvent.getSource().getSelectedItem().getBindingContext().getObject();
-                that.oGModel.setProperty("/uniqId", sSelItem.REF_UNIQUE_ID);
+                that.oGModel.setProperty("/RefuniqId", sSelItem.REF_UNIQUE_ID);
+                that.oGModel.setProperty("/uniqId", sSelItem.UNIQUE_ID);
             }
             else{
-                var sSelItem = that.oGModel.getProperty("/uniqueData")
-                that.oGModel.setProperty("/uniqId", sSelItem[0][0].REF_UNIQUE_ID);
+                var sSelItem = that.oGModel.getProperty("/uniqueData")[0];
+                that.oGModel.setProperty("/RefuniqId", sSelItem.REF_UNIQUE_ID);
+                that.oGModel.setProperty("/uniqId", sSelItem.UNIQUE_ID);
             }
             // Calling Item Detail page
             that.getOwnerComponent().runAsOwner(function () {
@@ -209,5 +215,251 @@ function (Controller, MessageToast, MessageBox, JSONModel, Filter, FilterOperato
                 }
             });
         },
+
+        generateData:function(Data){
+
+            var TempData = Data;
+            var UID = Data[0].UID;
+            var TempUIDS = Data[0].ITEMDATA;
+            var CharValues = Data[0].CHARVALUES;
+            var TmpmaxValue = Data[0].MaxValue;
+            var ItemData, idsInArray1, CharCount = 0;
+            var configArray = [];
+
+
+            const countMap = new Map();
+            // Iterate over the array and count occurrences of REF_CHARVAL
+            CharValues.forEach(item => {
+                const refCharval = item.REF_CHAR_VALUE;
+                
+                if (countMap.has(refCharval)) {
+                    countMap.set(refCharval, countMap.get(refCharval) + 1);
+                } else {
+                    countMap.set(refCharval, 1);
+                }
+
+            });
+ 
+            // Convert the map to the desired output array format
+            const output = [];
+            countMap.forEach((count, refCharval) => {
+                output.push({ REF_CHAR_VALUE: refCharval, COUNT: count });
+            });
+
+            // Extract the 'id' values from array1
+            idsInArray1 = UID.map(item => item.REF_UNIQUE_ID);
+            // Filter array2 to include only items with 'id' present in array1
+            ItemData = TempUIDS.filter(item => idsInArray1.includes(item.UNIQUE_ID));
+
+            for (var v = 0; v < UID.length; v++) {
+                var lsChar = {};
+                var lsUnique = {},
+                lsUnique1 = {};
+
+                CharCount = 0;
+
+                 // TmpmaxValue = TmpmaxValue + 1;
+                // lsUnique['UNIQUE_ID'] = "NPI" + TmpmaxValue
+                lsUnique['REF_UNIQUE_ID'] = UID[v].REF_UNIQUE_ID;
+                lsUnique['PRODUCT_ID'] = UID[v].PRODUCT_ID;
+                lsUnique['UNIQUE_DESC'] = UID[v].UNIQUE_DESC;
+                lsUnique['UID_TYPE'] = UID[v].UID_TYPE;
+                lsUnique['PROJECT_ID'] = UID[v].PROJECT_ID;
+                // lsUnique['WEIGHT'] = UID[v].WEIGHT;
+                // lsUnique['VALID_FROM'] = UID[v].VALID_FROM;
+                // lsUnique['VALID_TO'] = UID[v].VALID_TO;
+                lsUnique['CONFIG'] = [];
+                lsUnique1['CONFIG'] = [];
+
+                var itemDataTemp = ItemData.filter(item => item.UNIQUE_ID == UID[v].REF_UNIQUE_ID);
+                var newCharCountArr = [];
+                for(var cntU=0;  cntU < itemDataTemp.length; cntU++){
+                    var lsUniqueConfig = {};
+                    
+                    var charCount = output.filter(item => item.REF_CHAR_VALUE == itemDataTemp[cntU].CHAR_VALUE);
+                    if (charCount.length > 0) {
+                        itemDataTemp[cntU]['Count'] = charCount[0].COUNT;
+                        newCharCountArr.push(itemDataTemp[cntU]);
+
+
+                    }
+                    else {
+                        lsUniqueConfig['CHAR_NUM'] = itemDataTemp[cntU].CHAR_NUM;
+                        lsUniqueConfig['CHARVAL_NUM'] = itemDataTemp[cntU].CHARVAL_NUM;
+                        lsUniqueConfig['CHAR_VALUE'] = itemDataTemp[cntU].CHAR_VALUE;
+
+
+                        lsUniqueConfig['CHAR_DESC'] = itemDataTemp[cntU].CHAR_DESC;
+                        lsUniqueConfig['CHARVAL_DESC'] = itemDataTemp[cntU].CHARVAL_DESC;
+                        // lsUniqueConfig['CHAR_VALUE'] = itemDataTemp[cntU].CHAR_VALUE;
+
+
+                        lsUnique1['CONFIG'].push(lsUniqueConfig);
+                    }
+                }
+                var tempArrays=[];
+                var test = [];
+                var DescArray = [];
+        if(newCharCountArr.length > 0){
+                for(var cnt=0; cnt<CharValues.length; cnt++){
+                    test = [];
+                    test['CONFIG'] = '';
+                    test.Weight = CharValues[cnt].WEIGHT;
+                    test.fromdate = CharValues[cnt].VALID_FROM;
+                    test.todate = CharValues[cnt].VALID_TO;
+
+                    /// test case ///
+                    var itemDataTemp1 = ItemData.filter(item => item.CHAR_VALUE === CharValues[cnt].CHAR_VALUE);
+                    if(itemDataTemp1.length > 0){
+                        DescArray.push(itemDataTemp1[0]);
+                    }
+
+                    // End
+
+
+
+
+                    for(var c=0; c<newCharCountArr.length; c++){
+                        if(newCharCountArr[c].CHAR_VALUE === CharValues[cnt].REF_CHAR_VALUE){
+                            lsUniqueConfig = {};
+                        lsUniqueConfig['CHAR_NUM'] = newCharCountArr[c].CHAR_NUM;
+                        // lsUniqueConfig['CHARVAL_NUM'] = newCharCountArr[c].CHARVAL_NUM;
+                        lsUniqueConfig['CHARVAL_NUM'] = CharValues[cnt].CHAR_VALUE;
+                        lsUniqueConfig['CHAR_VALUE'] = CharValues[cnt].CHAR_VALUE;
+                        test['CONFIG'] = lsUniqueConfig
+                        tempArrays.push(test);
+
+                        // tempArrays.push(lsUniqueConfig);
+                        }
+
+                    }
+                }
+
+                function generateCombinations(array) {
+                    // Group the array elements by CHAR_NUM
+                    const grouped = array.reduce((acc, obj) => {
+                        acc[obj.CONFIG.CHAR_NUM] = acc[obj.CONFIG.CHAR_NUM] || [];
+                        acc[obj.CONFIG.CHAR_NUM].push(obj);
+                        return acc;
+                    }, {});
+                
+                    const keys = Object.keys(grouped);
+                    const result = [];
+                    const result1 = [];
+                    var wt = 100;
+                
+                    function combine(index, current) {
+                        if (index === keys.length) {
+                            result.push([...current]);
+                            return;
+                        }
+                
+                        grouped[keys[index]].forEach(obj => {
+                            // current.push(obj.CONFIG);
+                            current.push(obj);
+                            
+                            combine(index + 1, current);
+                            current.pop();
+                        });
+                    }
+                
+                    combine(0, []);
+                    return result;
+                }
+                
+                const combinations = generateCombinations(tempArrays);
+
+                // if(combinations.length > 0){
+                
+                    for(var comb = 0; comb<combinations.length; comb++){
+                        var newlsUnniqe= {};
+                        var newUID = 0;
+                        newlsUnniqe = JSON.parse(JSON.stringify(lsUnique));  
+                        var lsConfig = [];
+                        var newConfig = [];
+                        var wt = 101; 
+                        var fromdate="", todate="";   
+                        for(var l=0; l<combinations[comb].length; l++){
+                            //// Test case
+                            var tempDesc = DescArray.filter(el => el.CHAR_VALUE === combinations[comb][l].CONFIG.CHAR_VALUE);
+                            if(tempDesc.length > 0){
+                            combinations[comb][l].CONFIG['CHAR_DESC'] = tempDesc[0].CHAR_DESC;
+                            combinations[comb][l].CONFIG['CHARVAL_DESC'] = tempDesc[0].CHARVAL_DESC;
+                            }
+
+
+                            //// end
+                            lsConfig = lsConfig.concat(combinations[comb][l].CONFIG);
+                            if(wt > combinations[comb][l].Weight){
+                                wt = combinations[comb][l].Weight;
+                            }
+                            if(fromdate === ""){
+                                fromdate = combinations[comb][l].fromdate;
+                            } else if(new Date(fromdate) > new Date(combinations[comb][l].fromdate)) {
+                                fromdate = combinations[comb][l].fromdate;
+                            }
+                            if(todate === ""){
+                                todate = combinations[comb][l].todate;
+                            } else if(new Date(todate) < new Date(combinations[comb][l].todate)) {
+                                todate = combinations[comb][l].todate;
+                            }
+
+                        }
+    
+                        newConfig = lsConfig.concat(lsUnique1.CONFIG);
+                        // newConfig.sort(GenF.dynamicSortMultiple("CHAR_NUM"));
+                        newConfig = newConfig.sort((a, b) => a.CHAR_NUM - b.CHAR_NUM);
+    
+                // to Check the duplicate configuration
+                        for(var conf=0; conf<configArray.length; conf++){
+                            if (JSON.stringify(newConfig) === JSON.stringify(configArray[conf]['CONFIG'])){
+                                
+                                newlsUnniqe['UNIQUE_ID'] = configArray[conf].UNIQUE_ID;
+                                newlsUnniqe['CONFIG'] = newConfig;
+                                newUID = 1;
+                                break;
+                            }                        
+                    }
+    
+                        if(newUID === 0){
+                            TmpmaxValue = TmpmaxValue + 1;
+                            newlsUnniqe['UNIQUE_ID'] = "NPI" + TmpmaxValue;
+                            newlsUnniqe['CONFIG'] = newConfig;
+                        }
+    
+    
+                        newlsUnniqe['WEIGHT'] = wt;
+                        newlsUnniqe['VALID_FROM'] = fromdate;
+                        newlsUnniqe['VALID_TO'] = todate;
+                        configArray.push(newlsUnniqe);
+                        CharCount = 1;
+                    
+                }
+            } else {
+                lsUnique['CONFIG'] = lsUnique1.CONFIG;
+                TmpmaxValue = TmpmaxValue + 1;
+                lsUnique['UNIQUE_ID'] = "NPI" + TmpmaxValue;
+                CharCount = 0;
+            }
+
+            if(CharCount === 0){
+                configArray.push(lsUnique);
+                }
+
+            }
+
+            that.ConfigArray = configArray;
+
+
+
+
+        },
+
+
+
+
+
+
+
     });
 });

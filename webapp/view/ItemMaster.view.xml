@@ -2,7 +2,7 @@
     xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
 	displayBlock="true" xmlns="sap.m" xmlns:m="sap.m" xmlns:l="sap.ui.layout" xmlns:ux="sap.uxap" xmlns:f="sap.ui.layout.form"
 	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:u="sap.ui.unified">
-    <Page id="idPage" showFooter="true">
+    <Page id="idPage" showFooter="true" showHeader="false">
 	<ux:ObjectPageLayout id="ObjectPageLayout" showFooter="true" headerContentPinnable="true">
 		<ux:headerTitle>
 			<ux:ObjectPageDynamicHeaderTitle>
@@ -24,12 +24,12 @@
 		  <ux:headerContent>
             <FlexBox wrap="Wrap" justifyContent= "Inherit" fitContainer="true">
             <VBox >
-                <Label text="Configurable Product" class="flux"/>
-                <Input id="idConfigProd" class="flux" width="450px" placeholder="Configurable Product" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="handleValueHelp" />
+                <Label text="Configurable Product"  class="sapUiSmallMarginEnd"/>
+                <Input id="idConfigProd"  width="250px" placeholder="Configurable Product" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="handleValueHelp" class="sapUiSmallMarginEnd" />
             </VBox>
             <VBox >
-                <Label text="Project Id" class="flux"/>
-                <Input id="idProjDet" class="flux" width="250px" placeholder="Project Id" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="handleValueHelp" />
+                <Label text="Project Id" />
+                <Input id="idProjDet"  width="250px" placeholder="Project Id" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="handleValueHelp" />
             </VBox>
             <VBox>
             <Label text=""></Label>
@@ -99,7 +99,8 @@
 
                                             <!-- <Text text="{PROJECT_ID}" /> 
                                             <Text text="{PRODUCT_ID}" />     -->
-                                            <Text text="{TMP_UNIQUE_ID}" />
+                                            <!-- <Text text="{TMP_UNIQUE_ID}" /> -->
+                                            <Text text="{UNIQUE_ID}" />
                                             <ObjectIdentifier title="{REF_UNIQUE_ID}" text="{UNIQUE_DESC}"/>
                                             <Text text= "{CHAR_NUM}" />
                                             <Text text= "{CHARVAL_NUM}" />

@@ -7,18 +7,36 @@
         <!-- <content> -->
         <HBox>
         <OverflowToolbar>
-           
-                    <SearchField id="idCharSearch" liveChange="onCharSearch" placeholder="Characteristic / Characteristic Value" width="800px"/>
-                    <ToolbarSpacer/>
+                        <Label text= "Temp UID -" class="boldClass" labelFor="TmpUID" />
+                        <Text id="TmpUID" text=""  class="sapUiSmallMarginBeginEnd"/> 
+
+                        <Label text= "Ref UID -" class="boldClass" labelFor="RefUID" />
+                        <Text id="RefUID" text="" />
+
+                        <!-- <FlexBox justifyContent="End">
+                        <items>
+                            <Text text="Text in Right Corner" />
+                        </items>
+                    </FlexBox> -->
+    
+                        <!-- <ToolbarSpacer /> -->
+                        <!-- <HBox justifyContent="End"> -->
+                    <SearchField id="idCharSearch" liveChange="onCharSearch" placeholder="Characteristic / Characteristic Value" width="250px" class="flux1 sapUiLargeMarginBegin" />
+                    <!-- <layoutData>
+                        <OverflowToolbarLayoutData moveToOverflow="false" />
+                    </layoutData>
+                    </SearchField> -->
+                    <!-- </HBox> -->
+                    <!-- <ToolbarSpacer/> -->
                     <!-- <Button id="idadd" text="Create Order" press="onOrderCreate" visible="true"/> -->
                     
                     </OverflowToolbar>
                     </HBox>
                     <Table id="idMatvarItem" items="{path: '/results1'}" rememberSelections="false"  sticky="ColumnHeaders" >
                         <columns>
-                         <Column hAlign="Left" visible="true" >
+                         <!-- <Column hAlign="Left" visible="true" >
                                 <Text text="TempUID" />
-                            </Column>
+                            </Column> -->
                         <Column hAlign="Left" >
                                 <Text text="Char Num" />
                             </Column>
@@ -38,7 +56,7 @@
                         <items>
                             <ColumnListItem>
                                 <cells>
-                                <Text text="{TMP_UNIQUE_ID}"/>
+                                <!-- <Text text="{TMP_UNIQUE_ID}"/> -->
                                     <ObjectIdentifier title="{CHAR_NUM}" text="{CHAR_DESC}"/>
                                     <Text text="{CHAR_NUM}" />
                                     <ObjectIdentifier title="{CHAR_VALUE}" text="{CHARVAL_DESC}" />
