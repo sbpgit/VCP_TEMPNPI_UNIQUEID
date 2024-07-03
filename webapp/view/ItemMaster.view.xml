@@ -102,7 +102,7 @@
                                             <Text text= "{CHARVAL_NUM}" />
                                              <Text text= "{CHAR_VALUE}" />
                                             <Text text= "{REF_CHAR_VALUE}" />
-                                            <Input value= "{WEIGHT}" liveChange="onInputChange" />
+                                            <Input value= "{WEIGHTAGE}" liveChange="onInputChange" />
                                             <DatePicker value= "{VALID_FROM}" displayFormat="YYYY-MM-dd" valueFormat="YYYY-MM-dd" class="disabledInput" change="onFromDateChange" />
                                             <DatePicker value= "{VALID_TO}" displayFormat="YYYY-MM-dd" valueFormat="YYYY-MM-dd" class="disabledInput" change="onToDateChange"/>
                                         </cells>
@@ -118,7 +118,8 @@
   <footer>
     <OverflowToolbar>
                 <ToolbarSpacer/>
-                <Button id="idSave" text="Generate" enabled="false" press="onGeneratePress"/>
+                <Button id="idGen" text="Generate UID" enabled="false" press="onGeneratePress" visible="false"/>
+                <Button id="idSave" text="Update UID" enabled="false" press="onGeneratePress" visible="false"/>
                 <!-- <Button text="Cancel"/> -->
             </OverflowToolbar>
             </footer>

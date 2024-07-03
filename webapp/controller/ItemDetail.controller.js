@@ -42,9 +42,15 @@ sap.ui.define(
                 sap.ui.core.BusyIndicator.show();
                 var srefUniqId = that.oGModel.getProperty("/RefuniqId");
                 var sUniqId = that.oGModel.getProperty("/uniqId");
+                var sGenFlag = that.oGModel.getProperty("/genFlag");
                 that.totalUniqeData = that.oGModel.getProperty("/uniqueData");
                 that.tableData = that.totalUniqeData.filter(f => f.REF_UNIQUE_ID === srefUniqId && f.TMP_UNIQUE_ID === sUniqId);
-                that.oCharModel.setData({results1:that.tableData[0].CONFIG});
+
+                if(sGenFlag === "X"){
+                    that.oCharModel.setData({results1:that.tableData[0].CONFIG});
+                } else {
+                    that.oCharModel.setData({results1:that.tableData});
+                }
                 that.byId("idMatvarItem").setModel(that.oCharModel);
 
                 // var tmpuid = "Temp UID" + " - " + that.tableData[0].UNIQUE_ID;
@@ -53,7 +59,7 @@ sap.ui.define(
                 that.byId("RefUID").setText(that.tableData[0].REF_UNIQUE_ID);
                 sap.ui.core.BusyIndicator.hide();
             },
-            onCharSearch:function(){
+            onCharSearch:function(oEvent){
                 var sQuery = oEvent.getParameter("value") || oEvent.getParameter("newValue"),
                 sId = oEvent.getParameter("id"),
                 oFilters = [];
@@ -66,9 +72,9 @@ sap.ui.define(
                         new Filter({
                             filters: [
                                 new Filter("CHAR_NUM", FilterOperator.Contains, sQuery),
-                                new Filter("CHAR_DESC", FilterOperator.EQ, sQuery),
+                                new Filter("CHAR_DESC", FilterOperator.Contains, sQuery),
                                 new Filter("CHAR_VALUE", FilterOperator.Contains, sQuery),
-                                new Filter("CHARVAL_DESC", FilterOperator.EQ, sQuery)
+                                new Filter("CHARVAL_DESC", FilterOperator.Contains, sQuery)
                             ],
                             and: false,
                         })

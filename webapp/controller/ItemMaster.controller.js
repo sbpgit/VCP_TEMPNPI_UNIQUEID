@@ -28,7 +28,7 @@ sap.ui.define([
                 that.prodModel = new JSONModel();
                 that.projModel.setSizeLimit(1000);
                 that.prodModel.setSizeLimit(1000);
-                that.tabModel.setSizeLimit(1000);
+                that.tabModel.setSizeLimit(10000);
                 if (!this._valueHelpDialogProjectDet) {
                     this._valueHelpDialogProjectDet = sap.ui.xmlfragment(
                         "vcpapp.vcptempidcreation.view.MultiProjectDetails",
@@ -89,10 +89,14 @@ sap.ui.define([
             },
             onGetData: function () {
                 that.mainArray=[];
-                sap.ui.core.BusyIndicator.show()
+                sap.ui.core.BusyIndicator.show();
                 var selectedProd = that.byId("idConfigProd").getValue();
                 var selectedProj = that.byId("idProjDet").getValue();
                 if (selectedProd && selectedProj) {
+                    that.byId("newTabSearch").setValue();
+                    that.tabModel = new JSONModel();
+                    that.tabModel.setSizeLimit(10000);
+                    that.byId("idTempDetails").setModel(that.tabModel);
                     this.getOwnerComponent().getModel("BModel").callFunction("/tmpuniqueid", {
                         method: "GET",
                         urlParameters: {
@@ -105,20 +109,35 @@ sap.ui.define([
                             // that.oGModel.setProperty("/uniqueData",that.headerData);
                             // that.itemData = that.headerData[1];
                             that.genFlag = oData.results[0].GenFlag;
+                            that.oGModel.setProperty("/genFlag",that.genFlag);
                             if (oData.results[0].GenFlag === "X") {
                                 that.generateData(oData.results);
                                 var finalData = that.ConfigArray;
                                 that.oGModel.setProperty("/uniqueData", that.ConfigArray);
+                                that.byId("idGen").setEnabled(true);
+                                that.byId("idGen").setVisible(true);
+                                that.byId("idSave").setEnabled(false);
+                                that.byId("idSave").setVisible(false);
                             }
                             else {
-                                var finalData = oData.results[0].UID;
-                                that.oGModel.setProperty("/uniqueData", oData.results[0].ITEMDATA);
+                                var finalData = JSON.parse(oData.results[0].UID);
+                                that.oGModel.setProperty("/uniqueData", JSON.parse(oData.results[0].ITEMDATA));
+                                that.byId("idSave").setEnabled(true);
+                                that.byId("idSave").setVisible(true);
+                                that.byId("idGen").setEnabled(false);
+                                that.byId("idGen").setVisible(false);
                             }
-                            that.byId("idSave").setEnabled(true);
+                            
+
+                            finalData = finalData.sort((a, b) => parseInt(a.TMP_UNIQUE_ID.match(/\d+/g)[0]) - parseInt(b.TMP_UNIQUE_ID.match(/\d+/g)[0]));
+
                             that.tabModel.setData({ tempDetails: finalData });
                             that.byId("idTempDetails").setModel(that.tabModel);
-                            sap.ui.core.BusyIndicator.hide();
+                            that.byId("idTempDetails").getItems()[0].setSelected(true);
                             that.onHandleSelect();
+                            // that.byId("idTempDetails").selectedItem()
+                            sap.ui.core.BusyIndicator.hide();
+
 
                         },
                         error: function (oData) {
@@ -169,7 +188,7 @@ sap.ui.define([
                                 filters: [
                                     new Filter("UNIQUE_DESC", FilterOperator.Contains, sQuery),
                                     new Filter("REF_UNIQUE_ID", FilterOperator.EQ, sQuery),
-                                    new Filter("UNIQUE_ID", FilterOperator.EQ, sQuery),
+                                    new Filter("TMP_UNIQUE_ID", FilterOperator.EQ, sQuery),
                                 ],
                                 and: false,
                             })
@@ -198,9 +217,10 @@ sap.ui.define([
                     that.oGModel.setProperty("/uniqId", sSelItem.TMP_UNIQUE_ID);
                 }
                 else {
-                    var sSelItem = that.oGModel.getProperty("/uniqueData")[0];
-                    that.oGModel.setProperty("/RefuniqId", sSelItem.REF_UNIQUE_ID);
-                    that.oGModel.setProperty("/uniqId", sSelItem.TMP_UNIQUE_ID);
+                    // var sSelItem = that.oGModel.getProperty("/uniqueData")[0];
+                    var sSelItem = that.byId("idTempDetails").getItems()[0].getCells();
+                    that.oGModel.setProperty("/RefuniqId", parseInt(sSelItem[1].getTitle()));
+                    that.oGModel.setProperty("/uniqId", sSelItem[0].getText());
                 }
                 // Calling Item Detail page
                 that.getOwnerComponent().runAsOwner(function () {
@@ -228,8 +248,8 @@ sap.ui.define([
             generateData: function (Data) {
 
                 var TempData = Data;
-                var UID = Data[0].UID;
-                var TempUIDS = Data[0].ITEMDATA;
+                var UID = JSON.parse(Data[0].UID);
+                var TempUIDS = JSON.parse(Data[0].ITEMDATA);
                 var CharValues = Data[0].CHARVALUES;
                 var TmpmaxValue = Data[0].MaxValue;
                 var ItemData, idsInArray1, CharCount = 0;
@@ -423,7 +443,7 @@ sap.ui.define([
                             for (var conf = 0; conf < configArray.length; conf++) {
                                 if (JSON.stringify(newConfig) === JSON.stringify(configArray[conf]['CONFIG'])) {
 
-                                    newlsUnniqe['TMP_UNIQUE_ID'] = configArray[conf].UNIQUE_ID;
+                                    newlsUnniqe['TMP_UNIQUE_ID'] = configArray[conf].TMP_UNIQUE_ID;
                                     newlsUnniqe['CONFIG'] = newConfig;
                                     newUID = 1;
                                     break;
@@ -463,16 +483,16 @@ sap.ui.define([
                 var path = oEvent.getSource().getBindingContext().getPath();
                 var Data = that.byId("idTempDetails").getModel().getProperty(path);
                 if(that.genFlag==="X"){               
-                var index = that.ConfigArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.UNIQUE_ID === Data.UNIQUE_ID);
-                that.ConfigArray[index].WEIGHT = parseInt(oEvent.getParameters("value").value);
+                var index = that.ConfigArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
+                that.ConfigArray[index].WEIGHTAGE = parseInt(oEvent.getParameters("value").value);
                 }
                 else{
-                var index = that.mainArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.UNIQUE_ID === Data.UNIQUE_ID);
+                var index = that.mainArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
                 if(index === -1){
                     var newObject = {
                         PRODUCT_ID: Data.PRODUCT_ID,
                         PROJECT_ID: Data.PROJECT_ID,
-                        UNIQUE_ID:  Data.UNIQUE_ID,
+                        TMP_UNIQUE_ID:  Data.TMP_UNIQUE_ID,
                         REF_UNIQUE_ID:  Data.REF_UNIQUE_ID,
                         WEIGHTAGE:     parseInt(oEvent.getParameters("value").value),
                         VALID_FROM: Data.VALID_FROM,
@@ -481,7 +501,7 @@ sap.ui.define([
                     that.mainArray.push(newObject);
                 }  
                 else{
-                    that.mainArray[index].WEIGHT = parseInt(oEvent.getParameters("value").value);
+                    that.mainArray[index].WEIGHTAGE = parseInt(oEvent.getParameters("value").value);
                 }
                 }
             },
@@ -490,11 +510,12 @@ sap.ui.define([
                 var path = oEvent.getSource().getBindingContext().getPath();
                 var Data = that.byId("idTempDetails").getModel().getProperty(path);
                 if(that.genFlag ==="X"){
-                var index = that.ConfigArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.UNIQUE_ID === Data.UNIQUE_ID);
+                var index = that.ConfigArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
                 var FromDate = new Date(oEvent.getParameters("value").value);
                 var ToDate = new Date(that.ConfigArray[index].VALID_TO);
                 if (FromDate < ToDate) {
                     that.byId("idSave").setEnabled(true);
+                    that.byId("idGen").setEnabled(true);
                     that.ConfigArray[index].VALID_FROM = (oEvent.getParameters("value").value);
                     oEvent.getSource().setValueState("None");
                     oEvent.getSource().setValueStateText("");
@@ -502,12 +523,13 @@ sap.ui.define([
                 else if (FromDate > ToDate) {
                     MessageToast.show("From date cannot be after To date");
                     that.byId("idSave").setEnabled(false);
+                    that.byId("idGen").setEnabled(false);
                     oEvent.getSource().setValueState("Error");
                     oEvent.getSource().setValueStateText("From date cannot be after To date");
                 }
             }
             else{
-                var index = that.mainArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.UNIQUE_ID === Data.UNIQUE_ID);
+                var index = that.mainArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
                 if(index === -1){
                     var FromDate = new Date(oEvent.getParameters("value").value);
                     var ToDate = new Date(Data.VALID_TO);
@@ -515,20 +537,22 @@ sap.ui.define([
                     var newObject = {
                         PRODUCT_ID: Data.PRODUCT_ID,
                         PROJECT_ID: Data.PROJECT_ID,
-                        UNIQUE_ID:  Data.UNIQUE_ID,
+                        TMP_UNIQUE_ID:  Data.TMP_UNIQUE_ID,
                         REF_UNIQUE_ID:  Data.REF_UNIQUE_ID,
-                        WEIGHTAGE:     Data.WEIGHT,
+                        WEIGHTAGE:     Data.WEIGHTAGE,
                         VALID_FROM: oEvent.getParameters("value").value,
                         VALID_TO:   Data.VALID_TO
                     }
                     that.mainArray.push(newObject);
                     that.byId("idSave").setEnabled(true);
+                    that.byId("idGen").setEnabled(true);
                     oEvent.getSource().setValueState("None");
                     oEvent.getSource().setValueStateText("");
                 }
                 else if(FromDate > ToDate){
                     MessageToast.show("From date cannot be after To date");
                     that.byId("idSave").setEnabled(false);
+                    that.byId("idGen").setEnabled(false);
                     oEvent.getSource().setValueState("Error");
                     oEvent.getSource().setValueStateText("Valid From date cannot be after Valid To date");
                 }
@@ -538,6 +562,7 @@ sap.ui.define([
                     var ToDate = new Date(that.mainArray[index].VALID_TO);
                     if (FromDate < ToDate) {
                         that.byId("idSave").setEnabled(true);
+                        that.byId("idGen").setEnabled(true);
                         that.mainArray[index].VALID_FROM = (oEvent.getParameters("value").value);
                         oEvent.getSource().setValueState("None");
                         oEvent.getSource().setValueStateText("");
@@ -545,6 +570,7 @@ sap.ui.define([
                     else if (FromDate > ToDate) {
                         MessageToast.show("From date cannot be after To date");
                         that.byId("idSave").setEnabled(false);
+                        that.byId("idGen").setEnabled(false);
                         oEvent.getSource().setValueState("Error");
                         oEvent.getSource().setValueStateText("From date cannot be after To date");
                     }
@@ -555,24 +581,26 @@ sap.ui.define([
                 var path = oEvent.getSource().getBindingContext().getPath();
                 var Data = that.byId("idTempDetails").getModel().getProperty(path);
                 if(that.genFlag ==="X"){
-                var index = that.ConfigArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.UNIQUE_ID === Data.UNIQUE_ID);
+                var index = that.ConfigArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
                 var FromDate = new Date(that.ConfigArray[index].VALID_FROM);
                 var ToDate = new Date(oEvent.getParameters("value").value);
                 if (FromDate > ToDate) {
                     MessageToast.show("To date cannot be before From date");
                     that.byId("idSave").setEnabled(false);
+                    that.byId("idGen").setEnabled(false);
                     oEvent.getSource().setValueState("Error");
                     oEvent.getSource().setValueStateText("To date cannot be before From date");
                 }
                 else if (FromDate < ToDate) {
                     that.byId("idSave").setEnabled(true);
+                    that.byId("idGen").setEnabled(true);
                     that.ConfigArray[index].VALID_TO = (oEvent.getParameters("value").value);
                     oEvent.getSource().setValueState("None");
                     oEvent.getSource().setValueStateText("");
                 }
             }
             else{
-                var index = that.mainArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.UNIQUE_ID === Data.UNIQUE_ID);
+                var index = that.mainArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
                 if(index === -1){
                     var FromDate = new Date(Data.VALID_FROM);
                     var ToDate = new Date(oEvent.getParameters("value").value);
@@ -580,20 +608,22 @@ sap.ui.define([
                     var newObject = {
                         PRODUCT_ID: Data.PRODUCT_ID,
                         PROJECT_ID: Data.PROJECT_ID,
-                        UNIQUE_ID:  Data.UNIQUE_ID,
+                        TMP_UNIQUE_ID:  Data.TMP_UNIQUE_ID,
                         REF_UNIQUE_ID:  Data.REF_UNIQUE_ID,
-                        WEIGHTAGE:     Data.WEIGHT,
+                        WEIGHTAGE:     Data.WEIGHTAGE,
                         VALID_FROM: Data.VALID_FROM,
                         VALID_TO:   oEvent.getParameters("value").value
                     }
                     that.mainArray.push(newObject);
                     that.byId("idSave").setEnabled(true);
+                    that.byId("idGen").setEnabled(true);
                     oEvent.getSource().setValueState("None");
                     oEvent.getSource().setValueStateText("");
                 }
                 else if(FromDate > ToDate){
                     MessageToast.show("From date cannot be after To date");
                     that.byId("idSave").setEnabled(false);
+                    that.byId("idGen").setEnabled(false);
                     oEvent.getSource().setValueState("Error");
                     oEvent.getSource().setValueStateText("Valid From date cannot be after Valid To date");
                 }
@@ -603,6 +633,7 @@ sap.ui.define([
                     var ToDate = new Date(oEvent.getParameters("value").value);
                     if (FromDate < ToDate) {
                         that.byId("idSave").setEnabled(true);
+                        that.byId("idGen").setEnabled(true);
                         that.mainArray[index].VALID_TO = (oEvent.getParameters("value").value);
                         oEvent.getSource().setValueState("None");
                         oEvent.getSource().setValueStateText("");
@@ -610,6 +641,7 @@ sap.ui.define([
                     else if (FromDate > ToDate) {
                         MessageToast.show("From date cannot be after To date");
                         that.byId("idSave").setEnabled(false);
+                        that.byId("idGen").setEnabled(false);
                         oEvent.getSource().setValueState("Error");
                         oEvent.getSource().setValueStateText("From date cannot be after To date");
                     }
@@ -635,6 +667,9 @@ sap.ui.define([
                     success: function (oData) {
                         sap.ui.core.BusyIndicator.hide()
                         MessageToast.show(oData.genTmpUniqueID);
+                        if(oData.genTmpUniqueID.includes("Created") || oData.genTmpUniqueID.includes("updated")){
+                            that.onGetData();
+                        }
                     },
                     error: function (error) {
                         sap.ui.core.BusyIndicator.hide();

@@ -3,10 +3,11 @@
     xmlns:l="sap.ui.layout"
     xmlns:core="sap.ui.core" controllerName="vcpapp.vcptempidcreation.controller.ItemDetail"
     xmlns:html="http://www.w3.org/1999/xhtml">
-    <!-- <Page id="page" showHeader="false" showFooter="true"> -->
-        <!-- <content> -->
-        <HBox>
-        <OverflowToolbar>
+    <Page id="page1" showHeader="false" showFooter="true">
+        <content>
+        <!-- <HBox>
+        <OverflowToolbar> -->
+        <Toolbar >
                         <Label text= "Temp UID -" class="boldClass" labelFor="TmpUID" />
                         <Text id="TmpUID" text=""  class="sapUiSmallMarginBeginEnd"/> 
 
@@ -19,9 +20,9 @@
                         </items>
                     </FlexBox> -->
     
-                        <!-- <ToolbarSpacer /> -->
+                        <ToolbarSpacer />
                         <!-- <HBox justifyContent="End"> -->
-                    <SearchField id="idCharSearch" liveChange="onCharSearch" placeholder="Characteristic / Characteristic Value" width="250px" class="flux1 sapUiLargeMarginBegin" />
+                    <SearchField id="idCharSearch" liveChange="onCharSearch" placeholder="Characteristic / Characteristic Value" width="250px"  />
                     <!-- <layoutData>
                         <OverflowToolbarLayoutData moveToOverflow="false" />
                     </layoutData>
@@ -29,9 +30,10 @@
                     <!-- </HBox> -->
                     <!-- <ToolbarSpacer/> -->
                     <!-- <Button id="idadd" text="Create Order" press="onOrderCreate" visible="true"/> -->
-                    
-                    </OverflowToolbar>
-                    </HBox>
+                    </Toolbar>
+                    <!-- </OverflowToolbar>
+                    </HBox> -->
+
                     <Table id="idMatvarItem" items="{path: '/results1'}" rememberSelections="false"  sticky="ColumnHeaders" >
                         <columns>
                          <!-- <Column hAlign="Left" visible="true" >
@@ -66,12 +68,12 @@
                             </ColumnListItem>
                         </items>
                     </Table>
-                <!-- </content> -->
+                </content>
                 <!-- <footer>
 					<OverflowToolbar>
 						<ToolbarSpacer/>
 						<Button id="idUpdateSave" text="Save" press="onUpdateItem" type="Emphasized" textDirection="LTR" visible="false"/>
 					</OverflowToolbar>
 				</footer> -->
-    <!-- </Page> -->
+    </Page>
 </mvc:View>
