@@ -649,15 +649,16 @@ sap.ui.define([
             }
             },
             /**On Press of Generate */
-            onGeneratePress: function () {
+            onGeneratePress: function (oEvent) {
                 sap.ui.core.BusyIndicator.show();
-                if(that.genFlag === "X"){
+                if(that.genFlag === "X" && oEvent.getParameters().id.includes("idGen")){
                     var finalData = that.ConfigArray;
                 }
                 else{
                     var finalData = that.mainArray;
                 }
 
+                if(finalData.length > 0){
                 this.getOwnerComponent().getModel("BModel").callFunction("/genTmpUniqueID", {
                     method: "GET",
                     urlParameters: {
@@ -676,6 +677,9 @@ sap.ui.define([
                         sap.m.MessageToast.show(error.Message);
                     },
                 });
+            } else {
+                sap.m.MessageToast.show("No Data to generate (or) update");
+            }
 
             }
         });
