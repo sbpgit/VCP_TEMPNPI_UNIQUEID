@@ -91,6 +91,9 @@
                                     </Column> 
                                      <Column hAlign="Center" width="auto" vAlign="Middle">
                                         <Text text="Valid To" />
+                                    </Column>   
+                                    <Column hAlign="Right">
+                                        <Text text="" />
                                     </Column>                            
                                 </columns>
                                 <items>
@@ -105,6 +108,7 @@
                                             <Input value= "{WEIGHTAGE}" liveChange="onInputChange" />
                                             <DatePicker value= "{VALID_FROM}" displayFormat="YYYY-MM-dd" valueFormat="YYYY-MM-dd" class="disabledInput" change="onFromDateChange" />
                                             <DatePicker value= "{VALID_TO}" displayFormat="YYYY-MM-dd" valueFormat="YYYY-MM-dd" class="disabledInput" change="onToDateChange"/>
+                                            <Button id="idDel" icon="sap-icon://decline" press="onDeleteUID" visible="true" width="10px"/>
                                         </cells>
                                     </ColumnListItem>
                                 </items>

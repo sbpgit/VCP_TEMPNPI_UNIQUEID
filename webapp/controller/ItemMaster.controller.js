@@ -648,6 +648,22 @@ sap.ui.define([
                 }
             }
             },
+
+            // Delete Tmp UID
+            onDeleteUID:function(oEvent){
+                var path = oEvent.getSource().getBindingContext().getPath();
+                var Data = that.byId("idTempDetails").getModel().getProperty(path);
+                if(that.genFlag ==="X"){
+                
+                    var index = that.ConfigArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
+                    that.ConfigArray.splice(index, 1);
+                    that.byId("idTempDetails").getBinding("items").refresh();
+                }
+
+
+            },
+
+
             /**On Press of Generate */
             onGeneratePress: function (oEvent) {
                 sap.ui.core.BusyIndicator.show();
@@ -678,6 +694,7 @@ sap.ui.define([
                     },
                 });
             } else {
+                sap.ui.core.BusyIndicator.hide();
                 sap.m.MessageToast.show("No Data to generate (or) update");
             }
 
