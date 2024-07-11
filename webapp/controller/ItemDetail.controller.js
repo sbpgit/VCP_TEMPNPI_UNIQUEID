@@ -91,37 +91,37 @@ sap.ui.define(
 
 
 
-            onCharSearch1:function(oEvent){
+            // onCharSearch1:function(oEvent){
 
-                var sQuery = oEvent.getParameter("value") || oEvent.getParameter("newValue"),
-                sId = oEvent.getParameter("id"),
-                oFilters = [];
-                var FItemData = that.oGModel.getProperty("/uniqueItemData");
+            //     var sQuery = oEvent.getParameter("value") || oEvent.getParameter("newValue"),
+            //     sId = oEvent.getParameter("id"),
+            //     oFilters = [];
+            //     var FItemData = that.oGModel.getProperty("/uniqueItemData");
 
-                if(sQuery !== ""){
-                var FilterData =  FItemData.filter(el=> el.CHAR_NUM === sQuery || el.CHAR_VALUE === sQuery || el.CHAR_DESC === sQuery || el.CHARVAL_DESC === sQuery)
+            //     if(sQuery !== ""){
+            //     var FilterData =  FItemData.filter(el=> el.CHAR_NUM === sQuery || el.CHAR_VALUE === sQuery || el.CHAR_DESC === sQuery || el.CHARVAL_DESC === sQuery)
             
-                function removeDuplicate(array, key) {
-                    var check = new Set();
-                            return array.filter(obj => !check.has(obj[key]) && check.add(obj[key]));
-                        }
-                    var DupRemData = removeDuplicate(FilterData, 'TMP_UNIQUE_ID');
+            //     function removeDuplicate(array, key) {
+            //         var check = new Set();
+            //                 return array.filter(obj => !check.has(obj[key]) && check.add(obj[key]));
+            //             }
+            //         var DupRemData = removeDuplicate(FilterData, 'TMP_UNIQUE_ID');
 
-                    that.oGModel.setProperty("/DuplicateRemData", DupRemData);
+            //         that.oGModel.setProperty("/DuplicateRemData", DupRemData);
 
-                } else {
-                    that.oGModel.setProperty("/DuplicateRemData", []);
-                }
+            //     } else {
+            //         that.oGModel.setProperty("/DuplicateRemData", []);
+            //     }
 
-                    that.bus.publish("data", "RefreshData");
+            //         that.bus.publish("data", "RefreshData");
 
-            // // Extract the 'id' values from array1
-            // var idsInArray1 = DupRemData.map(item => item.TMP_UNIQUE_ID);
-            // // Filter array2 to include only items with 'id' present in array1
-            // var filteredItemData = FItemData.filter(item => idsInArray1.includes(item.TMP_UNIQUE_ID));
+            // // // Extract the 'id' values from array1
+            // // var idsInArray1 = DupRemData.map(item => item.TMP_UNIQUE_ID);
+            // // // Filter array2 to include only items with 'id' present in array1
+            // // var filteredItemData = FItemData.filter(item => idsInArray1.includes(item.TMP_UNIQUE_ID));
 
 
 
-            }
+            // }
         });
     });

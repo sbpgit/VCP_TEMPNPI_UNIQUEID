@@ -55,7 +55,7 @@
                               <headerToolbar>
 			                    <OverflowToolbar>
                                 <SearchField id="newTabSearch" search="oHomesearch" liveChange="oHomesearch" width="200px" placeholder="Ref and Unique Id" />
-                                <SearchField id="CharSearch" search="onCharSearch" liveChange="onCharSearch" width="200px" placeholder="Characteristics Search" />
+                                <SearchField id="CharSearch" search="onSearchChar" liveChange="onSearchChar" width="200px" placeholder="Characteristics Search" />
 				                    <ToolbarSpacer/>
 			                    </OverflowToolbar>
 		                      </headerToolbar>                             

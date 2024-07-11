@@ -741,7 +741,7 @@ sap.ui.define([
             },
 
 
-            onCharSearch:function(oEvent){
+            onSearchChar:function(oEvent){
                 var sQuery = oEvent.getParameter("value") || oEvent.getParameter("newValue"),
                 sId = oEvent.getParameter("id"),
                 oFilters = [];
@@ -750,7 +750,7 @@ sap.ui.define([
                 var ItemData = that.ItemData;
 
 
-                if(sQuery !== ""){
+                if(sQuery !== "" && sQuery !== undefined){
                 var FilterData =  FItemData.filter(el=> el.CHAR_NUM === sQuery || el.CHAR_VALUE === sQuery || el.CHAR_DESC === sQuery || el.CHARVAL_DESC === sQuery)
             
                 function removeDuplicate(array, key) {
