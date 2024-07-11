@@ -54,7 +54,8 @@
                               mode="SingleSelectMaster"   selectionChange="onHandleSelect" rememberSelections="false"> 
                               <headerToolbar>
 			                    <OverflowToolbar>
-                                <SearchField id="newTabSearch" search="oHomesearch" liveChange="oHomesearch" width="400px" placeholder="Ref Unique Id" />
+                                <SearchField id="newTabSearch" search="oHomesearch" liveChange="oHomesearch" width="200px" placeholder="Ref and Unique Id" />
+                                <SearchField id="CharSearch" search="onCharSearch" liveChange="onCharSearch" width="200px" placeholder="Characteristics Search" />
 				                    <ToolbarSpacer/>
 			                    </OverflowToolbar>
 		                      </headerToolbar>                             

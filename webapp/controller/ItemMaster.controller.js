@@ -22,6 +22,7 @@ sap.ui.define([
                 // this.bus.publish("nav", "toBeginPage", {
                 //     viewName: this.getView().getProperty("viewName"),
                 // });
+                this.bus.subscribe("data", "RefreshData", this.RefreshItems, this);
                 that.oGModel = this.getOwnerComponent().getModel("oGModel");
                 that.tabModel = new JSONModel();
                 that.projModel = new JSONModel();
@@ -45,7 +46,11 @@ sap.ui.define([
                 }
 
             },
+
+            
             onAfterRendering: function () {
+                // that.HeaderData = [];
+                // that.ItemData = [];
                 this.getOwnerComponent().getModel("BModel").read("/getProjDetails", {
                     method: "GET",
                     success: function (oData) {
@@ -112,9 +117,10 @@ sap.ui.define([
                             that.oGModel.setProperty("/genFlag",that.genFlag);
                             if (oData.results[0].GenFlag === "X") {
                                 that.oGModel.setProperty("/delFlag",true);
-                                that.generateData(oData.results);
-                                var finalData = that.ConfigArray;
-                                that.oGModel.setProperty("/uniqueData", that.ConfigArray);
+                                that.TmpUIDCreation(oData.results);
+                                // that.generateData(oData.results);
+                                var finalData = that.HeaderData;
+                                that.oGModel.setProperty("/uniqueItemData", that.ItemData);
                                 that.byId("idGen").setEnabled(true);
                                 that.byId("idGen").setVisible(true);
                                 that.byId("idSave").setEnabled(false);
@@ -124,21 +130,25 @@ sap.ui.define([
                                 that.oGModel.setProperty("/delFlag",false);
 
                                 var finalData = JSON.parse(oData.results[0].UID);
-                                that.oGModel.setProperty("/uniqueData", JSON.parse(oData.results[0].ITEMDATA));
+                                that.oGModel.setProperty("/uniqueItemData", JSON.parse(oData.results[0].ITEMDATA));
                                 that.byId("idSave").setEnabled(true);
                                 that.byId("idSave").setVisible(true);
                                 that.byId("idGen").setEnabled(false);
                                 that.byId("idGen").setVisible(false);
+                                finalData = finalData.sort((a, b) => parseInt(a.TMP_UNIQUE_ID.match(/\d+/g)[0]) - parseInt(b.TMP_UNIQUE_ID.match(/\d+/g)[0]));
                             }
                             
 
-                            finalData = finalData.sort((a, b) => parseInt(a.TMP_UNIQUE_ID.match(/\d+/g)[0]) - parseInt(b.TMP_UNIQUE_ID.match(/\d+/g)[0]));
+                            
 
                             that.tabModel.setData({ tempDetails: finalData });
                             that.byId("idTempDetails").setModel(that.tabModel);
+
+                            if(oData.results[0].UID.length > 0){
                             that.byId("idTempDetails").getItems()[0].setSelected(true);
                             that.onHandleSelect();
                             // that.byId("idTempDetails").selectedItem()
+                            }
                             sap.ui.core.BusyIndicator.hide();
 
 
@@ -248,6 +258,67 @@ sap.ui.define([
                         });
                     }
                 });
+            },
+
+
+
+            TmpUIDCreation:function(Data){
+                var TempData = Data;
+                var UID = JSON.parse(Data[0].UID);
+                var ItemUIDS = JSON.parse(Data[0].ITEMDATA);
+                var TmpmaxValue = parseInt(Data[0].MaxValue);
+                var ItemData, idsInArray1, CharCount = 0;
+                var configArray = [];
+                var HeaderArray = [],
+                    ItemArray   = [];
+
+                var tempHeader = {};
+                var tempItem = {};
+
+                    UID = UID.sort((a, b) => a.TMP_ID - b.TMP_ID);
+                for (var v = 0; v < UID.length; v++) {
+                    tempHeader['REF_UNIQUE_ID'] = UID[v].REF_UNIQUE_ID;
+                    tempHeader['PRODUCT_ID'] = UID[v].PRODUCT_ID;
+                    tempHeader['TMP_UNIQUE_DESC'] = UID[v].TMP_UNIQUE_DESC;
+                    tempHeader['PROJECT_ID'] = UID[v].PROJECT_ID;
+                    tempHeader['WEIGHTAGE'] = UID[v].WEIGHTAGE;
+                    tempHeader['VALID_FROM'] = UID[v].VALID_FROM;
+                    tempHeader['VALID_TO'] = UID[v].VALID_TO;
+                    tempHeader['TMP_ID'] = UID[v].TMP_ID;
+
+                    if(UID[v].DUPLICATE === 0){
+                        TmpmaxValue = TmpmaxValue + 1
+                        tempHeader['TMP_UNIQUE_ID'] = "NPI" + TmpmaxValue;
+                    } else {
+                        var index = HeaderArray.findIndex(el=> el.TMP_ID === UID[v].DUPLICATE);
+                        tempHeader['TMP_UNIQUE_ID'] = HeaderArray[index].TMP_UNIQUE_ID;
+                    }
+
+                    var Temp = ItemUIDS.filter(el=> el.TMP_ID === UID[v].TMP_ID);
+
+                    Temp.forEach(ele => {
+                        tempItem['REF_UNIQUE_ID'] = UID[v].REF_UNIQUE_ID;
+                        tempItem['PRODUCT_ID'] = UID[v].PRODUCT_ID;
+                        tempItem['PROJECT_ID'] = UID[v].PROJECT_ID;
+                        tempItem['TMP_UNIQUE_ID'] = tempHeader['TMP_UNIQUE_ID'];
+                        tempItem['CHAR_NUM'] = ele.CHAR_NUM;
+                        tempItem['CHARVAL_NUM'] = ele.CHARVAL_NUM;
+                        tempItem['CHAR_VALUE'] = ele.CHAR_VALUE;
+                        tempItem['CHAR_DESC'] = ele.CHAR_DESC;
+                        tempItem['CHARVAL_DESC'] = ele.CHARVAL_DESC;
+
+                        ItemArray.push(tempItem);
+                        tempItem = {};
+                    });
+
+                    HeaderArray.push(tempHeader);
+                    tempHeader = {};
+
+                }
+
+                that.HeaderData = HeaderArray;
+                that.ItemData = ItemArray;
+
             },
 
             generateData: function (Data) {
@@ -488,8 +559,8 @@ sap.ui.define([
                 var path = oEvent.getSource().getBindingContext().getPath();
                 var Data = that.byId("idTempDetails").getModel().getProperty(path);
                 if(that.genFlag==="X"){               
-                var index = that.ConfigArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
-                that.ConfigArray[index].WEIGHTAGE = parseInt(oEvent.getParameters("value").value);
+                var index = that.HeaderData.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
+                that.HeaderData[index].WEIGHTAGE = parseInt(oEvent.getParameters("value").value);
                 }
                 else{
                 var index = that.mainArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
@@ -515,13 +586,13 @@ sap.ui.define([
                 var path = oEvent.getSource().getBindingContext().getPath();
                 var Data = that.byId("idTempDetails").getModel().getProperty(path);
                 if(that.genFlag ==="X"){
-                var index = that.ConfigArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
+                var index = that.HeaderData.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
                 var FromDate = new Date(oEvent.getParameters("value").value);
-                var ToDate = new Date(that.ConfigArray[index].VALID_TO);
+                var ToDate = new Date(that.HeaderData[index].VALID_TO);
                 if (FromDate < ToDate) {
                     that.byId("idSave").setEnabled(true);
                     that.byId("idGen").setEnabled(true);
-                    that.ConfigArray[index].VALID_FROM = (oEvent.getParameters("value").value);
+                    that.HeaderData[index].VALID_FROM = (oEvent.getParameters("value").value);
                     oEvent.getSource().setValueState("None");
                     oEvent.getSource().setValueStateText("");
                 }
@@ -586,8 +657,8 @@ sap.ui.define([
                 var path = oEvent.getSource().getBindingContext().getPath();
                 var Data = that.byId("idTempDetails").getModel().getProperty(path);
                 if(that.genFlag ==="X"){
-                var index = that.ConfigArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
-                var FromDate = new Date(that.ConfigArray[index].VALID_FROM);
+                var index = that.HeaderData.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
+                var FromDate = new Date(that.HeaderData[index].VALID_FROM);
                 var ToDate = new Date(oEvent.getParameters("value").value);
                 if (FromDate > ToDate) {
                     MessageToast.show("To date cannot be before From date");
@@ -599,7 +670,7 @@ sap.ui.define([
                 else if (FromDate < ToDate) {
                     that.byId("idSave").setEnabled(true);
                     that.byId("idGen").setEnabled(true);
-                    that.ConfigArray[index].VALID_TO = (oEvent.getParameters("value").value);
+                    that.HeaderData[index].VALID_TO = (oEvent.getParameters("value").value);
                     oEvent.getSource().setValueState("None");
                     oEvent.getSource().setValueStateText("");
                 }
@@ -660,10 +731,84 @@ sap.ui.define([
                 var Data = that.byId("idTempDetails").getModel().getProperty(path);
                 if(that.genFlag ==="X"){
                 
-                    var index = that.ConfigArray.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
-                    that.ConfigArray.splice(index, 1);
+                    var index = that.HeaderData.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
+                    var TMPID = that.HeaderData[index].TMP_ID;
+                    that.HeaderData.splice(index, 1);
                     that.byId("idTempDetails").getBinding("items").refresh();
                 }
+
+
+            },
+
+
+            onCharSearch:function(oEvent){
+                var sQuery = oEvent.getParameter("value") || oEvent.getParameter("newValue"),
+                sId = oEvent.getParameter("id"),
+                oFilters = [];
+                var FItemData = that.oGModel.getProperty("/uniqueItemData");
+                var HeadData = that.HeaderData;
+                var ItemData = that.ItemData;
+
+
+                if(sQuery !== ""){
+                var FilterData =  FItemData.filter(el=> el.CHAR_NUM === sQuery || el.CHAR_VALUE === sQuery || el.CHAR_DESC === sQuery || el.CHARVAL_DESC === sQuery)
+            
+                function removeDuplicate(array, key) {
+                    var check = new Set();
+                            return array.filter(obj => !check.has(obj[key]) && check.add(obj[key]));
+                        }
+                    var DupRemData = removeDuplicate(FilterData, 'TMP_UNIQUE_ID');
+                
+                
+
+                if(DupRemData.length > 0){
+                    // Extract the 'id' values from array1
+                    var idsInArray1 = DupRemData.map(item => item.TMP_UNIQUE_ID);
+                    // Filter array2 to include only items with 'id' present in array1
+                    var filteredHeaderData = HeadData.filter(item => idsInArray1.includes(item.TMP_UNIQUE_ID));
+                    // var filteredItemData = ItemData.filter(item => idsInArray1.includes(item.TMP_UNIQUE_ID));
+                // } else {
+                //     var filteredHeaderData = [];
+                }
+            } else {
+                var filteredHeaderData = HeadData;
+            }
+
+
+            // that.oGModel.setProperty("/uniqueItemData", that.ItemData);
+            that.tabModel =  new JSONModel();
+            that.tabModel.setData({ tempDetails: filteredHeaderData });
+            that.byId("idTempDetails").setModel(that.tabModel);
+            if(filteredHeaderData.length > 0){
+                that.byId("idTempDetails").getItems()[0].setSelected(true);
+                that.onHandleSelect();
+            }
+
+            },
+
+            RefreshItems:function(oEvent){
+               var DupRemData = that.oGModel.getProperty("/DuplicateRemData");
+
+               var HeadData = that.HeaderData;
+                var ItemData = that.ItemData;
+
+                if(DupRemData.length !== 0){
+                    // Extract the 'id' values from array1
+                    var idsInArray1 = DupRemData.map(item => item.TMP_UNIQUE_ID);
+                    // Filter array2 to include only items with 'id' present in array1
+                    var filteredHeaderData = HeadData.filter(item => idsInArray1.includes(item.TMP_UNIQUE_ID));
+                    // var filteredItemData = ItemData.filter(item => idsInArray1.includes(item.TMP_UNIQUE_ID));
+                } else {
+                    var filteredHeaderData = HeadData
+                }
+
+
+            // that.oGModel.setProperty("/uniqueItemData", that.ItemData);
+            that.tabModel =  new JSONModel();
+            that.tabModel.setData({ tempDetails: filteredHeaderData });
+            that.byId("idTempDetails").setModel(that.tabModel);
+            that.byId("idTempDetails").getItems()[0].setSelected(true);
+            that.onHandleSelect();
 
 
             },
@@ -673,18 +818,34 @@ sap.ui.define([
             onGeneratePress: function (oEvent) {
                 sap.ui.core.BusyIndicator.show();
                 if(that.genFlag === "X" && oEvent.getParameters().id.includes("idGen")){
-                    var finalData = that.ConfigArray;
+                    var HeadData1 = that.HeaderData;
+                    var ItemData = that.ItemData;
+
+                    function removeProperty (array, property) {   
+                        return array.map(obj => {                       
+                        const newObj = { ...obj };  
+                       delete newObj[property];                        
+                       return newObj;   
+                    }); 
+                };    
+                
+                       // Remove the 'TMP_ID' property from each object                       
+                       var  HeadData = removeProperty(HeadData1, 'TMP_ID');
+                       
+                        
                 }
                 else{
-                    var finalData = that.mainArray;
+                    var HeadData = that.mainArray;
+                    var ItemData = [];
                 }
 
-                if(finalData.length > 0){
+                if(HeadData.length > 0){
                 this.getOwnerComponent().getModel("BModel").callFunction("/genTmpUniqueID", {
                     method: "GET",
                     urlParameters: {
                         Flag : that.genFlag,
-                        TMPDATA: JSON.stringify(finalData),
+                        HeadData: JSON.stringify(HeadData),
+                        ItemData : JSON.stringify(ItemData)
                     },
                     success: function (oData) {
                         sap.ui.core.BusyIndicator.hide()
