@@ -111,6 +111,7 @@ sap.ui.define([
                             that.genFlag = oData.results[0].GenFlag;
                             that.oGModel.setProperty("/genFlag",that.genFlag);
                             if (oData.results[0].GenFlag === "X") {
+                                that.oGModel.setProperty("/delFlag",true);
                                 that.generateData(oData.results);
                                 var finalData = that.ConfigArray;
                                 that.oGModel.setProperty("/uniqueData", that.ConfigArray);
@@ -120,6 +121,8 @@ sap.ui.define([
                                 that.byId("idSave").setVisible(false);
                             }
                             else {
+                                that.oGModel.setProperty("/delFlag",false);
+
                                 var finalData = JSON.parse(oData.results[0].UID);
                                 that.oGModel.setProperty("/uniqueData", JSON.parse(oData.results[0].ITEMDATA));
                                 that.byId("idSave").setEnabled(true);
@@ -189,6 +192,8 @@ sap.ui.define([
                                     new Filter("UNIQUE_DESC", FilterOperator.Contains, sQuery),
                                     new Filter("REF_UNIQUE_ID", FilterOperator.EQ, sQuery),
                                     new Filter("TMP_UNIQUE_ID", FilterOperator.EQ, sQuery),
+                                    // new Filter("CHAR_VALUE", FilterOperator.EQ, sQuery),
+                                    // new Filter("REF_CHAR_VALUE", FilterOperator.EQ, sQuery),
                                 ],
                                 and: false,
                             })

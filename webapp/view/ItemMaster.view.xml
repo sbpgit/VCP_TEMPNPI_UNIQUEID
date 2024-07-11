@@ -65,13 +65,13 @@
                                     <Column hAlign="Center" width="auto" vAlign="Middle">
                                         <Text text="Product ID" />
                                     </Column> -->
-                                    <Column hAlign="Center" width="auto" vAlign="Middle" visible="true">
+                                    <Column hAlign="Center" width="20px" vAlign="Middle" visible="true">
                                         <Text text="Temp Unique Id" />
                                     </Column> 
-                                    <Column hAlign="Center" width="auto" vAlign="Middle" >
+                                    <Column hAlign="Center" width="20px" vAlign="Middle" >
                                         <Text text="Reference Unique Id" />
                                     </Column> 
-                                    <Column hAlign="Center" width="auto" vAlign="Middle" visible="false">
+                                    <!-- <Column hAlign="Center" width="auto" vAlign="Middle" visible="false">
                                         <Text text="Char Num" />
                                     </Column>
                                     <Column hAlign="Center" width="auto" vAlign="Middle" visible="false">
@@ -82,17 +82,17 @@
                                     </Column>
                                     <Column hAlign="Center" width="auto" vAlign="Middle" visible="false">
                                         <Text text="Reference Char Value" />
-                                    </Column>
-                                    <Column hAlign="Center" width="auto" vAlign="Middle">
+                                    </Column> -->
+                                    <Column hAlign="Center" width="20px" vAlign="Middle">
                                         <Text text="Weightage" />
                                     </Column>
-                                      <Column hAlign="Center" width="auto" vAlign="Middle">
+                                      <Column hAlign="Center" width="30px" vAlign="Middle">
                                         <Text text="Valid From" />
                                     </Column> 
-                                     <Column hAlign="Center" width="auto" vAlign="Middle">
+                                     <Column hAlign="Center" width="30px" vAlign="Middle">
                                         <Text text="Valid To" />
                                     </Column>   
-                                    <Column hAlign="Right">
+                                    <Column hAlign="Right" width="10px">
                                         <Text text="" />
                                     </Column>                            
                                 </columns>
@@ -101,14 +101,14 @@
                                         <cells>
                                             <Text text="{TMP_UNIQUE_ID}" />
                                             <ObjectIdentifier title="{REF_UNIQUE_ID}" text="{TMP_UNIQUE_DESC}"/>
-                                            <Text text= "{CHAR_NUM}" />
+                                            <!-- <Text text= "{CHAR_NUM}" />
                                             <Text text= "{CHARVAL_NUM}" />
                                              <Text text= "{CHAR_VALUE}" />
-                                            <Text text= "{REF_CHAR_VALUE}" />
+                                            <Text text= "{REF_CHAR_VALUE}" /> -->
                                             <Input value= "{WEIGHTAGE}" liveChange="onInputChange" />
                                             <DatePicker value= "{VALID_FROM}" displayFormat="YYYY-MM-dd" valueFormat="YYYY-MM-dd" class="disabledInput" change="onFromDateChange" />
                                             <DatePicker value= "{VALID_TO}" displayFormat="YYYY-MM-dd" valueFormat="YYYY-MM-dd" class="disabledInput" change="onToDateChange"/>
-                                            <Button id="idDel" icon="sap-icon://decline" press="onDeleteUID" visible="true" width="10px"/>
+                                            <Button id="idDel" icon="sap-icon://decline" press="onDeleteUID" visible="{oGModel>/delFlag}" />
                                         </cells>
                                     </ColumnListItem>
                                 </items>
