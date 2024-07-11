@@ -99,6 +99,7 @@ sap.ui.define([
                 var selectedProj = that.byId("idProjDet").getValue();
                 if (selectedProd && selectedProj) {
                     that.byId("newTabSearch").setValue();
+                    that.byId("CharSearch").setValue();
                     that.tabModel = new JSONModel();
                     that.tabModel.setSizeLimit(10000);
                     that.byId("idTempDetails").setModel(that.tabModel);
