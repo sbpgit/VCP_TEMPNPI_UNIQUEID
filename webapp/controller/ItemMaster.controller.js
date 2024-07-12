@@ -733,9 +733,18 @@ sap.ui.define([
                 if(that.genFlag ==="X"){
                 
                     var index = that.HeaderData.findIndex(el => el.REF_UNIQUE_ID === Data.REF_UNIQUE_ID && el.TMP_UNIQUE_ID === Data.TMP_UNIQUE_ID);
-                    var TMPID = that.HeaderData[index].TMP_ID;
+                    var TMPID = that.HeaderData[index];
                     that.HeaderData.splice(index, 1);
+
+                    var ItemData = that.ItemData;
+                    var Item = ItemData.filter(el=> el.REF_UNIQUE_ID !== TMPID.REF_UNIQUE_ID && el.TMP_UNIQUE_ID !== TMPID.TMP_UNIQUE_ID);
+                    that.ItemData = Item;
                     that.byId("idTempDetails").getBinding("items").refresh();
+
+                    
+                        that.byId("idTempDetails").getItems()[0].setSelected(true);
+                        that.onHandleSelect();
+                    
                 }
 
 
