@@ -117,6 +117,7 @@ sap.ui.define([
                             PRODUCT_ID: selectedProd
                         },
                         success: function (oData) {
+                            if(oData.results[0].UID !== "[]"){
                             that.headerData = [], that.itemData = [], that.genFlag;
                             // that.headerData= JSON.parse(oData.tmpuniqueid);
                             // that.oGModel.setProperty("/uniqueData",that.headerData);
@@ -157,6 +158,10 @@ sap.ui.define([
                                 that.onHandleSelect();
                                 // that.byId("idTempDetails").selectedItem()
                             }
+                        }
+                        else{
+                            MessageToast.show("Temporary Unique Id's are not yet generated for this combination.")
+                        }
                             sap.ui.core.BusyIndicator.hide();
 
 
