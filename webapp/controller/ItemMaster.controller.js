@@ -1,5 +1,5 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
+    "vcpapp/vcptempidcreation/controller/BaseController",
     "sap/m/MessageToast",
     "sap/m/MessageBox",
     "sap/ui/model/json/JSONModel",
@@ -11,10 +11,10 @@ sap.ui.define([
     'sap/ui/export/library',
     'sap/ui/export/Spreadsheet',
 ],
-    function (Controller, MessageToast, MessageBox, JSONModel, Filter, FilterOperator, Device, Fragment, File, library, Spreadsheet) {
+    function (BaseController, MessageToast, MessageBox, JSONModel, Filter, FilterOperator, Device, Fragment, File, library, Spreadsheet) {
         "use strict";
         var that, oGModel;
-        return Controller.extend("vcpapp.vcptempidcreation.controller.ItemMaster", {
+        return BaseController.extend("vcpapp.vcptempidcreation.controller.ItemMaster", {
             onInit: function () {
                 that = this;
                 this.bus = sap.ui.getCore().getEventBus();
@@ -44,25 +44,20 @@ sap.ui.define([
                     );
                     this.getView().addDependent(this._valueHelpDialogProd);
                 }
-                this.getRouter().getRoute("ItemMaster").attachPatternMatched(this._onPatternMatched.bind(this));
-
-            },
-            /**
-                 * Called when the URL matches pattern "Details"
-                 * @constructor
-                 */
-            _onPatternMatched: function () {
-                var params = that.getOwnerComponent().oComponentData.startupParameters;
-                if (params) {
-                    that.byId("idConfigProd").setValue();
-                    that.byId("idProjDet").setValue();
-                }
-                else {
-
-                }
+                
             },
 
             onAfterRendering: function () {
+                var oFilters=[];
+                var prod = that.oGModel.getProperty('/SelectedProducted');
+                var proj = that.oGModel.getProperty('/SelectedProjected');
+                that.Flag = that.oGModel.getProperty('/SelectedFlag');
+                if(prod && proj){
+                    that.byId("idProjDet").setValue(proj);
+                    that.byId("idConfigProd").setValue(prod);
+                    that.onGetData();
+                }
+               
                 this.getOwnerComponent().getModel("BModel").read("/getProjDetails", {
                     method: "GET",
                     success: function (oData) {
@@ -886,6 +881,31 @@ sap.ui.define([
                     sap.m.MessageToast.show("No Data to generate (or) update");
                 }
 
+            },
+            onBackToProject:function(){
+                if(that.Flag){
+                    var selectedProject = that.byId("idProjDet").getValue();
+                var seletedProduct = that.byId("idConfigProd").getValue();
+                if(selectedProject && seletedProduct){
+                    var xnavservice = sap.ushell && sap.ushell.Container && sap.ushell.Container.getService
+                    && sap.ushell.Container.getService("CrossApplicationNavigation");                            
+                    var href = ( xnavservice && xnavservice.hrefForExternal({                            
+                    target : { semanticObject : "NewProdIntro", action : "Display" }                         
+                    // params : { "PROJECT_ID" : selectedProject, "PRODUCT_ID": seletedProduct,"Flag":"Y" }                            
+                    })) || "";
+                    xnavservice.toExternal({
+                        target: {
+                        shellHash: href
+                        }
+                        });
+                }
+                else{
+                    MessageToast.show("Please select product/project");
+                }
+                }
+                else{
+
+                }
             }
         });
     });

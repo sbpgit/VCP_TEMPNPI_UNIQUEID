@@ -2,7 +2,7 @@
     xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
 	displayBlock="true" xmlns="sap.m" xmlns:m="sap.m" xmlns:l="sap.ui.layout" xmlns:ux="sap.uxap" xmlns:f="sap.ui.layout.form"
 	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:u="sap.ui.unified">
-    <Page id="idPage" showFooter="true" showHeader="false">
+    <Page id="idPage" showFooter="true" showHeader="true" showNavButton="true" navButtonPress="onBackToProject">
 	<ux:ObjectPageLayout id="ObjectPageLayout" showFooter="true" headerContentPinnable="true">
 		<ux:headerTitle>
 			<ux:ObjectPageDynamicHeaderTitle>

@@ -102,7 +102,7 @@ sap.ui.define(
          */
         onAfterRendering: function () {
           that = this;
-  
+          that.oGModel = this.getOwnerComponent().getModel("oGModel");
           var oViewModel = this.getModel("appView");
           /**  Removing the arrow button inbetween pages(ItemMaster and ItemDetail)*/
           if (this.getView().byId("fcl").mAggregations._midColumnForwardArrow !== undefined) {
@@ -233,6 +233,13 @@ sap.ui.define(
           } else {
             this.oFlexibleColumnLayout.toBeginColumnPage(aPages[0]);
             aPages[0].onAfterRendering();
+          }
+          var params = that.getOwnerComponent().oComponentData.startupParameters;
+          that.oGModel = this.getOwnerComponent().getModel("oGModel");
+          if (params.PRODUCT_ID && params.PROJECT_ID) {
+              that.oGModel.setProperty("/SelectedProducted",params.PRODUCT_ID[0]);
+              that.oGModel.setProperty("/SelectedProjected",params.PROJECT_ID[0]);
+              that.oGModel.setProperty("/SelectedFlag",params.Flag[0]);
           }
         },
   
